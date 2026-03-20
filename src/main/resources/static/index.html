@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Access Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2230;
+      --border: #30363d;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --blue: #388bfd;
+      --text: #e6edf3;
+      --text-muted: #7d8590;
+      --admin: #f85149;
+      --maintain: #fb8500;
+      --write: #3fb950;
+      --triage: #d29922;
+      --read: #388bfd;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Top Nav ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+    }
+
+    nav .logo svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--text);
+    }
+
+    nav .badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Hero Search ── */
+    .hero {
+      padding: 56px 24px 32px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      background: linear-gradient(135deg, #e6edf3 30%, #388bfd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 32px;
+    }
+
+    /* ── Search Bar ── */
+    .search-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .search-wrap input {
+      flex: 1;
+      min-width: 220px;
+      padding: 13px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.15);
+    }
+
+    .search-wrap input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 22px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, var(--accent) 0%, #2ea043 100%);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      max-width: 800px;
+      margin: 0 auto 32px;
+      padding: 0 24px;
+    }
+
+    .stat-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 0.87rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .stat-pill strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── Filter Row ── */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      margin: 0 auto 16px;
+      padding: 0 24px;
+    }
+
+    .filter-row label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .filter-row input {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.87rem;
+      font-family: inherit;
+      outline: none;
+      width: 220px;
+      transition: border-color 0.2s;
+    }
+
+    .filter-row input:focus {
+      border-color: var(--blue);
+    }
+
+    .filter-row select {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.87rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-row .spacer {
+      flex: 1;
+    }
+
+    /* ── Main Grid ── */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* ── User Card ── */
+    .user-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      overflow: hidden;
+      animation: slideIn 0.35s ease both;
+      transition: border-color 0.2s;
+    }
+
+    .user-card:hover {
+      border-color: #444d56;
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1f6feb, #388bfd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.97rem;
+      flex: 1;
+    }
+
+    .repo-count {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chevron {
+      color: var(--text-muted);
+      transition: transform 0.25s;
+      font-size: 0.8rem;
+    }
+
+    .user-card.expanded .chevron {
+      transform: rotate(90deg);
+    }
+
+    .repo-list {
+      display: none;
+      padding: 0 18px 14px;
+      border-top: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .user-card.expanded .repo-list {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .repo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #1e2530;
+      font-size: 0.88rem;
+    }
+
+    .repo-row:last-child {
+      border-bottom: none;
+    }
+
+    .repo-icon {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .repo-name {
+      flex: 1;
+      color: var(--blue);
+      font-weight: 500;
+    }
+
+    .perm-badge {
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .perm-admin {
+      background: rgba(248, 81, 73, 0.15);
+      color: var(--admin);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .perm-maintain {
+      background: rgba(251, 133, 0, 0.12);
+      color: var(--maintain);
+      border: 1px solid rgba(251, 133, 0, 0.3);
+    }
+
+    .perm-write {
+      background: rgba(63, 185, 80, 0.12);
+      color: var(--write);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .perm-triage {
+      background: rgba(210, 153, 34, 0.12);
+      color: var(--triage);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .perm-read {
+      background: rgba(56, 139, 253, 0.12);
+      color: var(--read);
+      border: 1px solid rgba(56, 139, 253, 0.3);
+    }
+
+    /* ── Loading Spinner ── */
+    .spinner-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 60px 0;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ── Error Cards ── */
+    .error-card {
+      max-width: 520px;
+      margin: 48px auto;
+      border-radius: 14px;
+      border: 1px solid;
+      overflow: hidden;
+      animation: slideIn 0.3s ease;
+    }
+
+    .error-card .ec-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 22px 14px;
+    }
+
+    .error-card .ec-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .error-card .ec-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .error-card .ec-sub {
+      font-size: 0.82rem;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    .error-card .ec-body {
+      padding: 0 22px 18px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .error-card .ec-hint {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .error-card .ec-hint strong {
+      display: block;
+      margin-bottom: 3px;
+      opacity: 0.7;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* colour themes */
+    .ec-404 {
+      border-color: rgba(56, 139, 253, 0.35);
+      background: rgba(56, 139, 253, 0.06);
+      color: #388bfd;
+    }
+
+    .ec-401 {
+      border-color: rgba(248, 81, 73, 0.35);
+      background: rgba(248, 81, 73, 0.06);
+      color: #f85149;
+    }
+
+    .ec-403 {
+      border-color: rgba(251, 133, 0, 0.35);
+      background: rgba(251, 133, 0, 0.06);
+      color: #fb8500;
+    }
+
+    .ec-net {
+      border-color: rgba(210, 153, 34, 0.35);
+      background: rgba(210, 153, 34, 0.06);
+      color: #d29922;
+    }
+
+    .ec-500 {
+      border-color: rgba(248, 81, 73, 0.35);
+      background: rgba(248, 81, 73, 0.06);
+      color: #f85149;
+    }
+
+    /* ── Info alert (empty org) ── */
+    .alert-info {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 18px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .alert-info h3 {
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .alert-info p {
+      font-size: 0.87rem;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-muted);
+    }
+
+    .empty-state .big-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state h2 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav>
+    <div class="logo">
+      <svg viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69
+        2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59
+        2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324
+        -2.916.324-2.916 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378
+        14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378
+        -22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486
+        -13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125
+        0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97
+        11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404
+        23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897
+        -.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935
+        33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+      </svg>
+      GitHub Access Report
+      <span class="badge">TOOL</span>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <h1>Repository Access Report</h1>
+    <p>Visualize who has access to which repositories in your GitHub organization</p>
+
+    <div class="search-wrap">
+      <input id="orgInput" type="text" placeholder="Enter organization name (e.g. microsoft)" autocomplete="off"
+        autocorrect="off" spellcheck="false" />
+      <button class="btn-primary" id="fetchBtn" onclick="fetchReport()">
+        <span id="btnIcon">🔍</span>
+        <span id="btnText">Generate Report</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Stats Bar ── -->
+  <div id="statsBar" class="stats-bar" style="display:none;"></div>
+
+  <!-- ── Filters ── -->
+  <div id="filterRow" class="filter-row" style="display:none;">
+    <label>Filter:</label>
+    <input id="searchUser" type="text" placeholder="Search user..." oninput="applyFilters()" />
+    <select id="permFilter" onchange="applyFilters()">
+      <option value="">All permissions</option>
+      <option value="admin">Admin</option>
+      <option value="maintain">Maintain</option>
+      <option value="write">Write</option>
+      <option value="triage">Triage</option>
+      <option value="read">Read</option>
+    </select>
+    <div class="spacer"></div>
+    <span id="resultCount" style="font-size:0.84rem;color:var(--text-muted);"></span>
+  </div>
+
+  <!-- ── Content ── -->
+  <main class="main" id="content">
+    <div class="empty-state">
+      <div class="big-icon">🔐</div>
+      <h2>Enter an organization name to get started</h2>
+      <p>The report shows which users have access to which repositories and at what permission level.</p>
+    </div>
+  </main>
+
+  <script>
+    let fullReport = {};
+
+    function fetchReport() {
+      const org = document.getElementById('orgInput').value.trim();
+      if (!org) {
+        showError('Please enter a GitHub organization name.');
+        return;
+      }
+
+      setLoading(true);
+      document.getElementById('statsBar').style.display = 'none';
+      document.getElementById('filterRow').style.display = 'none';
+
+      fetch(`/api/github/access-report?org=${encodeURIComponent(org)}`)
+        .then(res => {
+          if (!res.ok) return res.json().then(e => { throw e; });
+          return res.json();
+        })
+        .then(data => {
+          fullReport = data;
+          setLoading(false);
+          renderStats(org, data);
+          renderReport(data);
+        })
+        .catch(err => {
+          setLoading(false);
+          showError(err);
+        });
+    }
+
+    // Allow pressing Enter to search
+    document.getElementById('orgInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fetchReport();
+    });
+
+    function setLoading(on) {
+      const btn = document.getElementById('fetchBtn');
+      btn.disabled = on;
+      document.getElementById('btnIcon').textContent = on ? '⏳' : '🔍';
+      document.getElementById('btnText').textContent = on ? 'Fetching...' : 'Generate Report';
+      if (on) {
+        document.getElementById('content').innerHTML = `
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <span>Fetching repositories and collaborators in parallel…</span>
+        </div>`;
+      }
+    }
+
+    function renderStats(org, data) {
+      const users = Object.keys(data).length;
+      const repos = new Set(Object.values(data).flat().map(r => r.repo)).size;
+      const perms = Object.values(data).flat().reduce((acc, r) => {
+        acc[r.permission] = (acc[r.permission] || 0) + 1; return acc;
+      }, {});
+
+      const bar = document.getElementById('statsBar');
+      bar.innerHTML = `
+      <div class="stat-pill">🏢 Org: <strong>${escHtml(org)}</strong></div>
+      <div class="stat-pill">👥 Users: <strong>${users}</strong></div>
+      <div class="stat-pill">📦 Repos: <strong>${repos}</strong></div>
+      ${Object.entries(perms).map(([p, c]) =>
+        `<div class="stat-pill">${permEmoji(p)} ${cap(p)}: <strong>${c}</strong></div>`
+      ).join('')}
+    `;
+      bar.style.display = 'flex';
+      document.getElementById('filterRow').style.display = 'flex';
+    }
+
+    function renderReport(data) {
+      const content = document.getElementById('content');
+      const entries = Object.entries(data);
+
+      if (entries.length === 0) {
+        content.innerHTML = `
+        <div class="alert alert-info">
+          <h3>No users found</h3>
+          <p>This organization has no collaborators, or your token does not have sufficient scope.</p>
+        </div>`;
+        return;
+      }
+
+      // Sort by repo count desc
+      entries.sort((a, b) => b[1].length - a[1].length);
+
+      content.innerHTML = entries.map(([user, repos], i) => {
+        const initial = user[0].toUpperCase();
+        const color = avatarColor(user);
+        return `
+      <div class="user-card" id="card-${i}" data-user="${escHtml(user)}"
+           data-perms="${[...new Set(repos.map(r => r.permission))].join(',')}">
+        <div class="user-header" onclick="toggleCard(${i})">
+          <div class="avatar" style="background:${color}">${initial}</div>
+          <span class="user-name">${escHtml(user)}</span>
+          <span class="repo-count">${repos.length} repo${repos.length !== 1 ? 's' : ''}</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="repo-list">
+          ${repos.sort((a, b) => a.repo.localeCompare(b.repo)).map(r => `
+            <div class="repo-row">
+              <span class="repo-icon">📁</span>
+              <span class="repo-name">${escHtml(r.repo)}</span>
+              <span class="perm-badge perm-${r.permission}">${r.permission}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+      }).join('');
+
+      document.getElementById('resultCount').textContent = `${entries.length} users`;
+    }
+
+    function applyFilters() {
+      const userQ = document.getElementById('searchUser').value.toLowerCase();
+      const permQ = document.getElementById('permFilter').value;
+      const cards = document.querySelectorAll('.user-card');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const name = card.dataset.user.toLowerCase();
+        const perms = card.dataset.perms;
+        const matchUser = !userQ || name.includes(userQ);
+        const matchPerm = !permQ || perms.includes(permQ);
+        card.style.display = (matchUser && matchPerm) ? '' : 'none';
+        if (matchUser && matchPerm) visible++;
+      });
+      document.getElementById('resultCount').textContent = `${visible} users`;
+    }
+
+    function toggleCard(i) {
+      const card = document.getElementById(`card-${i}`);
+      card.classList.toggle('expanded');
+    }
+
+    function showError(err) {
+      const status = err.status || 0;
+      const org = escHtml(document.getElementById('orgInput').value.trim());
+
+      const cfg = (() => {
+        if (!status || err.message === 'Failed to fetch') return {
+          cls: 'ec-net', icon: '🔌', title: 'Cannot Reach Server',
+          sub: 'Network / connection error',
+          body: 'The backend service is not running or unreachable.',
+          hint: { label: 'Fix', text: 'Start the app: <code>java -jar target/github-access-report-1.0.0.jar</code> then try again.' }
+        };
+        if (status === 404) return {
+          cls: 'ec-404', icon: '🔍', title: `Organization Not Found`,
+          sub: `HTTP 404 · "${org}" does not exist on GitHub`,
+          body: 'GitHub could not find an organization with that name. It may not exist, or it may be private and hidden.',
+          hint: { label: 'Suggestion', text: `Check the spelling of <strong>${org}</strong>. Go to <strong>github.com/${org}</strong> to verify it exists as an Organization (not a user or repo).` }
+        };
+        if (status === 401) return {
+          cls: 'ec-401', icon: '🔑', title: 'Authentication Failed',
+          sub: 'HTTP 401 · Invalid or expired GitHub token',
+          body: 'The GitHub token was rejected. It may be expired, revoked, or incorrect.',
+          hint: { label: 'Fix', text: 'Go to <strong>github.com/settings/tokens</strong>, generate a new token with <code>repo</code> + <code>read:org</code> scopes, and update <code>application.yml</code>.' }
+        };
+        if (status === 403) return {
+          cls: 'ec-403', icon: '🚫', title: 'Access Denied',
+          sub: 'HTTP 403 · Forbidden or rate limit exceeded',
+          body: 'Your token does not have permission to access this resource, or GitHub API rate limit has been reached.',
+          hint: { label: 'Fix', text: 'Ensure your token has <code>read:org</code> scope. If rate-limited, wait a few minutes and try again.' }
+        };
+        return {
+          cls: 'ec-500', icon: '⚠️', title: 'Unexpected Error',
+          sub: `HTTP ${status || '?'}`,
+          body: err.message || 'An unexpected error occurred while contacting GitHub.',
+          hint: null
+        };
+      })();
+
+      document.getElementById('content').innerHTML = `
+      <div class="error-card ${cfg.cls}">
+        <div class="ec-header">
+          <span class="ec-icon">${cfg.icon}</span>
+          <div>
+            <div class="ec-title">${cfg.title}</div>
+            <div class="ec-sub">${cfg.sub}</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          ${cfg.body}
+          ${cfg.hint ? `<div class="ec-hint"><strong>💡 ${cfg.hint.label}</strong>${cfg.hint.text}</div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    function permEmoji(p) {
+      return { admin: '🔴', maintain: '🟠', write: '🟢', triage: '🟡', read: '🔵' }[p] || '⚪';
+    }
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    // Deterministic avatar color from username
+    function avatarColor(name) {
+      const colors = [
+        'linear-gradient(135deg,#1f6feb,#388bfd)',
+        'linear-gradient(135deg,#388233,#2ea043)',
+        'linear-gradient(135deg,#9a3412,#f97316)',
+        'linear-gradient(135deg,#6b21a8,#a855f7)',
+        'linear-gradient(135deg,#be185d,#ec4899)',
+        'linear-gradient(135deg,#0e7490,#22d3ee)',
+      ];
+      let h = 0;
+      for (let c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+      return colors[Math.abs(h) % colors.length];
+    }
+  </script>
+</body>
+
+</html>

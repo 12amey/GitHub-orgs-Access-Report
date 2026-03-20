@@ -1,0 +1,19 @@
+# ── Build output ──
+target/
+*.jar
+*.war
+*.class
+
+# ── IDE / OS ──
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ── Secrets — NEVER commit real tokens ──
+# Put your real token in GITHUB_TOKEN env var or override locally:
+# application-local.yml  (create this file locally, never commit it)
+
+# ── Maven wrapper (optional) ──
+!.mvn/wrapper/maven-wrapper.jar

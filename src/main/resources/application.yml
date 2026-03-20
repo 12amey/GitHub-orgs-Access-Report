@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+github:
+  # Set your GitHub Personal Access Token here or via the GITHUB_TOKEN environment variable.
+  # The env var takes precedence: export GITHUB_TOKEN=ghp_your_token_here
+  token: ${GITHUB_TOKEN:your_github_personal_access_token_here}
+  base-url: https://api.github.com
+  per-page: 100
+  thread-pool-size: 20
+
+spring:
+  application:
+    name: github-access-report
+
+logging:
+  level:
+    com.github.accessreport: INFO

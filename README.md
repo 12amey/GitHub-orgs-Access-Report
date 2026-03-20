@@ -253,3 +253,11 @@ github-access-report/
             └── controller/
                 └── GitHubControllerTest.java
 ```
+
+
+
+if all not working just run 
+git clone https://github.com/12amey/GitHub-orgs-Access-Report.git
+cd GitHub-orgs-Access-Report
+java "-Dgithub.token=YOUR_TOKEN_HERE" -jar target/github-access-report-1.0.0.jar
+
